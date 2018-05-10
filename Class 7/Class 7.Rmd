@@ -1,0 +1,179 @@
+---
+title: "Bioinformatics Class 7"
+author: "Natalie Toothacre"
+date: "April 24, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Funtions Again
+
+Revisiting function from class 6
+
+```{r}
+source("http://tinyurl.com/rescale-R")
+```
+
+Lets see if we can use this function
+
+```{r}
+rescale(1:10)
+```
+
+Looks good lets break it
+
+```{r}
+#rescale(c(1:10, "string"))
+```
+
+Lets try new **rescale2()** function
+
+```{r}
+#rescale2(c(1:10, "string"))
+```
+
+## Write a NA cecking function
+
+Here we write a new funtion to check NAs in two inputs
+
+```{r}
+x <- c( 1, 2, NA, 3, NA)
+y <- c(NA, 3, NA, 3, 4)
+
+is.na(x)
+```
+
+```{r}
+sum(is.na(x))
+```
+
+Lets put this together with `x` and `y`
+
+```{r}
+is.na(x) & is.na(y)
+```
+
+Our working snippet
+
+```{r}
+sum( is.na(x) & is.na(y))
+```
+
+This is the both_na() starting point
+
+```{r}
+function(x, y) {
+  ## Check for NA elements in both input vectors 
+  sum( is.na(x) & is.na(y) )
+}
+```
+
+Test
+
+```{r}
+both_na(x,y)
+```
+
+And again
+
+```{r}
+x <- c(NA, NA, NA)
+y1 <- c( 1, NA, NA)
+y2 <- c( 1, NA, NA, NA)
+
+both_na(x, y2)
+```
+
+Use stop() to give a more useful error code
+
+```{r}
+function(x, y) {
+  ## Check for NA elements in both input vectors and don't allow re-cycling 
+  if(length(x) != length(y)) {
+    stop("Input x and y should be vectors of the same length", call.=FALSE)
+  }
+  sum( is.na(x) & is.na(y) )
+}
+```
+
+Test
+
+```{r}
+x <- c(NA, NA, NA)
+y1 <- c( 1, NA, NA)
+y2 <- c( 1, NA, NA, NA)
+
+both_na2(x, y2)
+```
+
+Refine and polish and test both_na3
+
+```{r}
+x <- c( 1, 2, NA, 3, NA)
+y <- c(NA, 3, NA, 3, 4)
+
+both_na3(x, y)
+```
+
+
+
+
+## Another function example: gene intersection
+
+```{r}
+df1
+df2
+
+x <- df1$IDs
+y <- df2$IDs
+```
+
+```{r}
+x
+y
+
+```
+
+```{r}
+#intersect(x, y)
+```
+
+the **%in%** will be more helpful to us that **intersect()** 
+
+```{r}
+x %in% y
+
+y %in% x
+```
+
+```{r}
+x[x %in% y]
+y[y %in% x]
+```
+
+we can now **cbind()** our results to yield an intersect
+
+```{r}
+cbind(x[x %in% y], y[y %in% x])
+```
+
+Make this into a funtion **gene_intersect**
+
+```{r}
+gene_intersect <- function(x, y) {
+ cbind( x[ x %in% y ], y[ y %in% x ] )
+}
+
+gene_intersect(x, y)
+```
+
+
+
+
+
+
+
+
