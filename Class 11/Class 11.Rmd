@@ -1,0 +1,126 @@
+---
+title: "Bioinformatics Class 11"
+author: "Natalie Toothacre"
+date: "May 8, 2018"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## PDB Statistics
+
+Download CSV file from PDB database <http://www.rcsb.org/stats/summary>. Read this into R and determine fration of the X-ray structures.
+
+```{r}
+pdb.stats <- read.csv("Data Export Summary.csv")
+```
+
+Lets calculate something
+
+```{r}
+percent <- (pdb.stats$Total / sum(pdb.stats$Total)) *100
+names(percent) <- pdb.stats$Experimental.Method
+percent
+```
+
+
+# Working with Bio3D
+
+Lets load the package
+
+```{r}
+library(bio3d)
+```
+
+List the functions in this package and try an example
+
+```{r}
+#lbio3d()
+#example(plot.bio3d)
+```
+
+Read a PDB file
+
+```{r}
+pdb <- read.pdb("1hsg")
+pdb
+```
+
+Print subset of $atom data for the first two atoms
+
+```{r}
+pdb$atom[1:2, c("eleno", "elety", "x","y","z")]
+```
+
+
+
+Select and write out C alpha atom only PDB file
+
+```{r}
+inds <-  atom.select(pdb, "calpha")
+inds
+```
+
+Check if we have what we want
+
+```{r}
+head(pdb$atom[inds$atom,])
+```
+
+Continue to trim our PDB and write it out
+
+```{r}
+ca.pdb <- trim.pdb(pdb, inds=inds)
+ca.pdb
+
+write.pdb(ca.pdb, file = "calpha_only.pdb")
+```
+
+
+```{r}
+ids <- c("1TND_B","1AGR_A","1TAG_A","1GG2_A","1KJY_A","4G5Q_A")
+files <- get.pdb(ids, split = TRUE)
+
+pdbs <- pdbaln(files, fit = TRUE, exefile="C:/Users/Natalie/Downloads/muscle3.8.31_i86win32.exe")
+```
+
+
+##PCA of Adenylate kinase structures
+
+find the sequence
+
+```{r}
+aa <- get.seq("1ake_A")
+aa
+```
+
+Search the PDB database
+
+```{r}
+b <- blast.pdb(aa)
+```
+
+
+```{r}
+hits <- plot(b)
+```
+
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
