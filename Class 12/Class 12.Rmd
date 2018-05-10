@@ -1,0 +1,81 @@
+---
+title: "Class 12"
+author: "Natalie Toothacre"
+date: "May 10, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Setup for drug docking
+
+```{r}
+install.packages("bio3d")
+```
+
+
+```{r}
+library(bio3d)
+```
+
+```{r}
+file.name <- get.pdb("1hsg")
+hiv <- read.pdb(file.name)
+```
+
+Select out protein only and ligand only
+
+```{r}
+protein <- trim.pdb(hiv, "protein")
+ligand <- trim.pdb(hiv, "ligand")
+```
+
+Write out new PDB files so we can use them for docking
+
+```{r}
+write.pdb(protein, "1hsg_protein.pdb")
+write.pdb(ligand, "1hsg_ligand.pdb")
+```
+
+
+## Process docking results for VMD display
+
+
+```{r}
+res <- read.pdb("all.pdbqt", multi = TRUE)
+
+write.pdb(res, "results.pdb")
+```
+
+
+## RMSD (root mean square distance) of our results to Merck compund
+
+Select non-hydrogen atoms from our docking results
+
+```{r}
+inds.res <- atom.select(res, "noh")
+inds.res
+```
+
+```{r}
+#res$xyz[,inds.res$xyz]
+rmsd(ligand, res$xyz[,inds.res$xyz])
+```
+
+
+```{r}
+ori <- read.pdb("1hsg_ligand.pdbqt")
+rmsd(ori, res)
+```
+
+
+
+
+
+
+
+
+
+
