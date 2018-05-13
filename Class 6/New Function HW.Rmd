@@ -1,0 +1,59 @@
+---
+title: "Writing a Function"
+author: "Natalie Toothacre"
+date: "May 7, 2018"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# New Function: plotbfactor 
+
+Description:
+
+The input to this funtion is the PDB ID of a protein of interest and requires the installation of the bio3d package.
+
+This function pulls up the PDB file of the protein, selects for the atoms in chain A and with carbon alpha classification, and generates a plot of the b factor data from these atoms.
+
+The output of this function is a plot of the b factor data.
+  
+
+```{r}
+
+plotbfactor <- function(x) {
+  
+  #load the bio3d package
+  library(bio3d)
+  
+  #load the PDB coordinate file of the protein of interest
+  s <- read.pdb(x)
+  
+  #trim to chain A and Carbon alpha amino acid data
+  s.chainA <- trim.pdb(s, chain = "A", elety = "CA")
+  
+  #call the atom data then the b factor data from s1.chainA
+  s.b <- s.chainA$atom$b
+  
+  #plot the b factor data
+  bf_plot <- plotb3(s.b, sse=s.chainA, typ="l", ylab="Bfactor")
+  
+  return(bf_plot)
+}
+
+```
+
+
+# Using the function
+
+```{r}
+
+plotbfactor("4AKE")
+
+```
+
+
+
