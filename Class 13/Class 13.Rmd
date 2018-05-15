@@ -1,0 +1,109 @@
+---
+title: "Bioinformatics Class 13"
+author: "Natalie Toothacre"
+date: "May 15, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1000 Genomes Data Analysis
+
+Downloaded genotype data from Ensemble for Asthma associated SNP rs8067378
+See: (MXL) Mexican Ancestry in Los Angeles, California
+
+```{r}
+# Read CSV file
+genotype <- read.csv("373531-SampleGenotypes-Homo_sapiens_Variation_Sample_rs8067378 (1).csv")
+head(genotype)
+```
+
+
+Find how many of each genotype there are in this data set
+
+```{r}
+genotype.summary <- table(genotype[,2])
+genotype.summary
+```
+
+Proportion of each genotype
+
+```{r}
+genotype.summary/nrow(genotype) * 100
+```
+
+
+> **Q5**: What proportion of the Mexican Ancestry in Los Angeles sample population (MXL)
+are homozygous for the asthma associated SNP (G|G)? 
+
+Answer: 14%
+
+## RNA-seq
+
+Look mrore closely at sample HG00109 with GIG genotype for this SNP (From GBR population).
+
+### Side note on FASTA quality scores 
+```{r}
+#install.packages("seqinr")
+#install.packages("gtools")
+
+library(seqinr)
+library(gtools)
+
+phred <- asc( s2c("DDDDCDEDCDDDDBBDDDCC@")) - 33
+phred
+```
+
+## RNA-seq population scale analysis
+
+Read our results file from RNA-seq across ~230 samples
+
+```{r}
+expr <- read.table("rs8067378_ENSG00000172057.6.txt")
+expr
+```
+
+Look at data
+```{r}
+table(expr$geno)
+```
+
+How many samples?
+```{r}
+nrow(expr)
+```
+
+Boxplot of expression levels of ORMDL3 by genotpe
+
+```{r}
+boxplot(exp ~ geno, data = expr, notch = TRUE)
+```
+
+Trying out ggplot
+
+```{r}
+#install.packages("ggplot2")
+library(ggplot2)
+
+ggplot(expr, aes(geno, exp)) + geom_boxplot()
+```
+
+
+```{r}
+# Boxplot with the data shown
+ggplot(expr, aes(geno, exp, fill=geno)) + 
+  geom_boxplot(notch=TRUE, outlier.shape = NA) + 
+  geom_jitter(shape=16, position=position_jitter(0.2), alpha=0.4)
+```
+
+
+
+
+
+
+
+
+
+
