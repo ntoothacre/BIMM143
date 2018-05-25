@@ -1,0 +1,74 @@
+---
+title: "Find A Gene Project"
+author: "Natalie Toothacre"
+date: "May 25, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Load Bio3D library
+
+```{r}
+library(bio3d)
+library(tidyr)
+library(dplyr)
+```
+
+Read in sequence alignment file
+
+```{r}
+alignment <- read.fasta("Find a Gene Project/Black Bear/AlignmentFile_fasta")
+```
+
+Calculate sequence identity matrix
+
+```{r}
+identities <- seqidentity(alignment)
+```
+
+Generate a heatmap
+
+```{r}
+heatmap(identities, margins = c(10, 1))
+```
+
+Create a consensus sequence
+
+```{r}
+consensus_seq <- consensus(alignment)
+new_sequence <- consensus_seq$seq
+```
+
+```{r}
+blast_res <- blast.pdb(consensus_seq$seq)
+
+```
+
+```{r}
+final_consensus <- glue::collapse(new_sequence)
+final_consensus
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
